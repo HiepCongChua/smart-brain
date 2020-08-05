@@ -1,15 +1,15 @@
-import React, { Component } from "react";
-import Particles from "react-particles-js";
-import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-import Navigation from "./components/Navigation/Navigation";
-import Signin from "./components/Signin/Signin";
-import Register from "./components/Register/Register";
-import Logo from "./components/Logo/Logo";
-import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
-import Rank from "./components/Rank/Rank";
-import "./App.css";
-import Modal from "./components/Modal/Modal";
-import Profile from "./components/Profile/Profile";
+import React, { Component } from "react"
+import Particles from "react-particles-js"
+import FaceRecognition from "./components/FaceRecognition/FaceRecognition"
+import Navigation from "./components/Navigation/Navigation"
+import Signin from "./components/Signin/Signin"
+import Register from "./components/Register/Register"
+import Logo from "./components/Logo/Logo"
+import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm"
+import Rank from "./components/Rank/Rank"
+import "./App.css"
+import Modal from "./components/Modal/Modal"
+import Profile from "./components/Profile/Profile"
 
 const particlesOptions = {
   particles: {
@@ -21,7 +21,7 @@ const particlesOptions = {
       },
     },
   },
-};
+}
 
 const initialState = {
   input: "",
@@ -39,12 +39,32 @@ const initialState = {
     pet: "mich",
     age: "23",
   },
-};
+}
 
 class App extends Component {
   constructor() {
-    super();
-    this.state = initialState;
+    super()
+    this.state = initialState
+  }
+
+  componentDidMount() {
+    const token = window.sessionStorage.getItem("token")
+    if (token) {
+      fetch("http://localhost:3000/signin", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.id) {
+            fetch(``)
+          }
+        })
+        .catch(console.log)
+    }
   }
 
   loadUser = (data) => {
@@ -56,33 +76,33 @@ class App extends Component {
         entries: data.entries,
         joined: data.joined,
       },
-    });
-  };
+    })
+  }
 
   calculateFaceLocation = (data) => {
     const clarifaiFace =
-      data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById("inputimage");
-    const width = Number(image.width);
-    const height = Number(image.height);
+      data.outputs[0].data.regions[0].region_info.bounding_box
+    const image = document.getElementById("inputimage")
+    const width = Number(image.width)
+    const height = Number(image.height)
     return {
       leftCol: clarifaiFace.left_col * width,
       topRow: clarifaiFace.top_row * height,
       rightCol: width - clarifaiFace.right_col * width,
       bottomRow: height - clarifaiFace.bottom_row * height,
-    };
-  };
+    }
+  }
 
   displayFaceBox = (box) => {
-    this.setState({ box: box });
-  };
+    this.setState({ box: box })
+  }
 
   onInputChange = (event) => {
-    this.setState({ input: event.target.value });
-  };
+    this.setState({ input: event.target.value })
+  }
 
   onButtonSubmit = () => {
-    this.setState({ imageUrl: this.state.input });
+    this.setState({ imageUrl: this.state.input })
     fetch("http://localhost:3000/imageurl", {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -102,40 +122,33 @@ class App extends Component {
           })
             .then((response) => response.json())
             .then((count) => {
-              this.setState(Object.assign(this.state.user, { entries: count }));
+              this.setState(Object.assign(this.state.user, { entries: count }))
             })
-            .catch(console.log);
+            .catch(console.log)
         }
-        this.displayFaceBox(this.calculateFaceLocation(response));
+        this.displayFaceBox(this.calculateFaceLocation(response))
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   toggleModal = () => {
     this.setState((state) => ({
       ...state,
       isProfileOpen: !state.isProfileOpen,
-    }));
-  };
+    }))
+  }
 
   onRouteChange = (route) => {
     if (route === "signout") {
-      return this.setState(initialState);
+      return this.setState(initialState)
     } else if (route === "home") {
-      this.setState({ isSignedIn: true });
+      this.setState({ isSignedIn: true })
     }
-    this.setState({ route: route });
-  };
+    this.setState({ route: route })
+  }
 
   render() {
-    const {
-      isSignedIn,
-      imageUrl,
-      route,
-      box,
-      isProfileOpen,
-      user,
-    } = this.state;
+    const { isSignedIn, imageUrl, route, box, isProfileOpen, user } = this.state
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
@@ -176,8 +189,8 @@ class App extends Component {
           />
         )}
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App

@@ -1,21 +1,21 @@
-import React from "react";
-import "./Signin.css";
+import React from "react"
+import "./Signin.css"
 class Signin extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       signInEmail: "",
       signInPassword: "",
-    };
+    }
   }
 
   onEmailChange = (event) => {
-    this.setState({ signInEmail: event.target.value });
-  };
+    this.setState({ signInEmail: event.target.value })
+  }
 
   onPasswordChange = (event) => {
-    this.setState({ signInPassword: event.target.value });
-  };
+    this.setState({ signInPassword: event.target.value })
+  }
 
   onSubmitSignIn = () => {
     fetch("http://localhost:3000/signin", {
@@ -28,15 +28,22 @@ class Signin extends React.Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.userId) {
-          this.props.loadUser(data.user);
-          this.props.onRouteChange("home");
+        console.log(data)
+        if (data.userId && data.success === true) {
+          console.log(data.token)
+          this.saveAuthTokenInSession(data.token)
+          this.props.loadUser(data.user)
+          this.props.onRouteChange("home")
         }
-      });
-  };
+      })
+  }
+
+  saveAuthTokenInSession = (token) => {
+    window.sessionStorage.setItem("token", token)
+  }
 
   render() {
-    const { onRouteChange } = this.props;
+    const { onRouteChange } = this.props
     return (
       <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-5 center">
         <main className="pa4 black-80">
@@ -87,8 +94,8 @@ class Signin extends React.Component {
           </div>
         </main>
       </article>
-    );
+    )
   }
 }
 
-export default Signin;
+export default Signin
